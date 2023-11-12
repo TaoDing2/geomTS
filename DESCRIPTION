@@ -1,0 +1,25 @@
+Package: geomTS
+Title: Manifold-adapted models for time series of covariance and correlation matrices with applications to EEG data
+Version: 0.1.0.9000
+Authors@R: c( person("Tao","Ding", role = "aut"), person("Tom", "Nye", , email = "tom.nye@newcastle.ac.uk", role = c("aut", "cre")) )
+Description: This package is based on the Ph.D project of Tao Ding under the supervision of Tom Nye at School of Mathematics, Statistics, Physics, Newcastle University, UK
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: Rdpack,
+    expm,
+    graphics,
+    utils,
+    stats,
+    colorspace,
+    ggplot2,
+    scales,
+    MASS
+RdMacros: Rdpack
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
