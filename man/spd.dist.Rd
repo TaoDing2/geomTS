@@ -24,5 +24,5 @@ redEEG = DR_PCA(EEG$seizure1,N0 = 15)
 spd.dist(redEEG)
 }
 \seealso{
-\code{\link[=spd.dist]{spd.dist()}}
+\code{\link[=spd.metric]{spd.metric()}}
 }

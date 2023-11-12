@@ -24,5 +24,5 @@ S = list2array(S)
 cor.dist(S)
 }
 \seealso{
-\code{\link[=cor.dist]{cor.dist()}}
+\code{\link[=cor.metric]{cor.metric()}}
 }

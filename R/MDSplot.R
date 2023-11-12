@@ -37,7 +37,7 @@ euc.dist <- function(S){
 #' @import doParallel
 #' @import foreach
 #'
-#' @seealso [spd.dist()]
+#' @seealso [spd.metric()]
 #' @examples
 #' data(EEG)
 #' redEEG = DR_PCA(EEG$seizure1,N0 = 15)
@@ -80,7 +80,7 @@ spd.dist <- function(S,parallel = NULL){
 #' @import doParallel
 #' @import foreach
 #'
-#' @seealso [cor.dist()]
+#' @seealso [cor.metric()]
 #' @examples
 #' S = lapply(1:10, function(i) CorrM(5))
 #' S = list2array(S)
