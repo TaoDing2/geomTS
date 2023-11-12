@@ -153,71 +153,71 @@ DR_GME <- function(X){
   return(Pairs)
 }
 
-#' Dimensionality reduction by choosing the highest minimum eigenvalues via greedy algorithm
+#' #' Dimensionality reduction by choosing the highest minimum eigenvalues via greedy algorithm
+#' #'
+#' #' @param X An \eqn{p \times p \times n} array data.
+#' #'
+#' #' @return The descending order of HME with choosing pairs and corresponding HMEs
+#' #' @export
+#' #' @examples
+#' #' data(EEG)
+#' #' eegcov = EEG$seizure1
+#' #' DR_HME(eegcov)
+#' DR_HME <- function(X){
+#'   p <- dim(X)[1] # No. of channels
+#'   N <- dim(X)[3] # No. of time points
+#'   h.m.ev <- c() # store the highest minimum eigenvalues
+#'   ###
+#'   ###  Step 1: Find two "best" channels
+#'   ###
+#'   ### combinations of pair of channels
+#'   inipairs <- combn(p,2)
+#'   npairs <- dim(inipairs)[2]
+#'   minevals <- rep(0,npairs)
+#'   for(i in 1:npairs){
+#'     channels <- inipairs[,i]
+#'     tmp <- min(eigen(X[channels,channels,1])$values)
+#'     for(t in 2:N){
+#'       S = X[channels,channels,t]
+#'       lambda = min(eigen(S)$values)
+#'       if(lambda < tmp){
+#'         tmp = lambda
+#'       }
+#'     }
+#'     # store minimum eigenvalues
+#'     minevals[i] <- tmp
+#'   }
+#'   ### Find the highest minimum eigenvalues
+#'   h.m.ev[1]<- max(minevals)
+#'   # The pair of channels which has the highest minimum eigenvalues
+#'   pair <- inipairs[,which(minevals == max(minevals),arr.ind = TRUE)]
+#'   ###
+#'   ### Step 2: Add the channels based on greedy algorithm
+#'   ###
+#'   for(itr in 2:(p-1)){
+#'     #    cat("Finding ",itr+1,"th channel","\n")
+#'     ind <- c(1:p)
+#'     ind <- ind[-pair]
+#'     minevals <- rep(0,length=length(ind))
+#'     for(i in 1:length(ind)){
+#'       channels <- c(pair, ind[i]) # extract matrices with chal X chal diemnsion
+#'       tmp <- min(eigen( X[channels,channels,1])$values)
+#'       for(t in 2:N){
+#'         S = X[channels,channels,t]
+#'         lambda = min(eigen(S)$values)
+#'         if(lambda < tmp){
+#'           tmp = lambda
+#'         }
+#'       }
+#'       # store minimum eigenvalues
+#'       minevals[i] <- tmp
+#'     }
+#'     # The highest minimum eigenvalues with increasing channels
+#'     h.m.ev[itr] <- max(minevals)
+#'     # The combination of channels which has the highest minimum eigenvalues
+#'     pair <- c(pair, ind[which(minevals == max(minevals))]) # increasing channels added
 #'
-#' @param X An \eqn{p \times p \times n} array data.
-#'
-#' @return The descending order of HME with choosing pairs and corresponding HMEs
-#' @export
-#' @examples
-#' data(EEG)
-#' eegcov = EEG$seizure1
-#' DR_HME(eegcov)
-DR_HME <- function(X){
-  p <- dim(X)[1] # No. of channels
-  N <- dim(X)[3] # No. of time points
-  h.m.ev <- c() # store the highest minimum eigenvalues
-  ###
-  ###  Step 1: Find two "best" channels
-  ###
-  ### combinations of pair of channels
-  inipairs <- combn(p,2)
-  npairs <- dim(inipairs)[2]
-  minevals <- rep(0,npairs)
-  for(i in 1:npairs){
-    channels <- inipairs[,i]
-    tmp <- min(eigen(X[channels,channels,1])$values)
-    for(t in 2:N){
-      S = X[channels,channels,t]
-      lambda = min(eigen(S)$values)
-      if(lambda < tmp){
-        tmp = lambda
-      }
-    }
-    # store minimum eigenvalues
-    minevals[i] <- tmp
-  }
-  ### Find the highest minimum eigenvalues
-  h.m.ev[1]<- max(minevals)
-  # The pair of channels which has the highest minimum eigenvalues
-  pair <- inipairs[,which(minevals == max(minevals),arr.ind = TRUE)]
-  ###
-  ### Step 2: Add the channels based on greedy algorithm
-  ###
-  for(itr in 2:(p-1)){
-    #    cat("Finding ",itr+1,"th channel","\n")
-    ind <- c(1:p)
-    ind <- ind[-pair]
-    minevals <- rep(0,length=length(ind))
-    for(i in 1:length(ind)){
-      channels <- c(pair, ind[i]) # extract matrices with chal X chal diemnsion
-      tmp <- min(eigen( X[channels,channels,1])$values)
-      for(t in 2:N){
-        S = X[channels,channels,t]
-        lambda = min(eigen(S)$values)
-        if(lambda < tmp){
-          tmp = lambda
-        }
-      }
-      # store minimum eigenvalues
-      minevals[i] <- tmp
-    }
-    # The highest minimum eigenvalues with increasing channels
-    h.m.ev[itr] <- max(minevals)
-    # The combination of channels which has the highest minimum eigenvalues
-    pair <- c(pair, ind[which(minevals == max(minevals))]) # increasing channels added
-
-  }
-  Pairs <- list(pairs = pair,h.m.ev = h.m.ev)
-  return(Pairs)
-}
+#'   }
+#'   Pairs <- list(pairs = pair,h.m.ev = h.m.ev)
+#'   return(Pairs)
+#' }

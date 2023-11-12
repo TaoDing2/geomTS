@@ -4,13 +4,15 @@
 \alias{spd.dist}
 \title{Distance matrix using affine invariant metric}
 \usage{
-spd.dist(S, parallel = NULL)
+spd.dist(S, parallel = NULL, ncores = NULL)
 }
 \arguments{
 \item{S}{An \eqn{p \times p \times n} array data consisting of SPD matrices.}
 
 \item{parallel}{Logical value with default \code{FALSE}.When it is \code{TRUE},
 we use parallel computation to compute distance matrix.}
+
+\item{ncores}{The number of cores used in the parallel computation.}
 }
 \value{
 Distance object as \code{\link[=dist]{dist()}}.

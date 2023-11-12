@@ -2,20 +2,29 @@
 % Please edit documentation in R/MLE.R
 \name{MLE.Sca}
 \alias{MLE.Sca}
-\title{MLE for VAR model with scalar coefficients}
+\title{MLE for manifold-adapted model with scalar coefficients}
 \usage{
 MLE.Sca(lagvec, maxlag = NULL, Mean = NULL)
 }
 \arguments{
-\item{lagvec}{lagged results obtained from functions \link{spd.coordvec_lags} or \link{cor.coordvec_lags}}
+\item{lagvec}{Lagged vector results obtained from functions \link{euc.coordvec_lags}, \link{spd.coordvec_lags} nor \link{cor.coordvec_lags}.}
 
-\item{maxlag}{maximum lags with default 10}
+\item{maxlag}{Maximum lag with default value of \code{10}.}
 
-\item{Mean}{Logical values. True for involving Mean reversion, vice versa.}
+\item{Mean}{Logical value with default value of \code{FALSE}. When it is \code{TRUE}, we will consider the mean reverting term
+in our manifold-adapted time series model, vice versa.}
 }
 \value{
-estimated parameters and AIC values for different lags
+Estimated parameters and model parameters, including \describe{
+\item{theta}{Estimated parameters of autoregressive terms and mean reverting term (if \code{Mean} is \code{TRUE}).}
+\item{sigma}{Estimated standard deviation of the white noise in the model.}
+\item{AIC}{AIC value.}
+\item{loglik}{log-likelihood function value.}
+}
 }
 \description{
-MLE for VAR model with scalar coefficients
+Model inference by MLE for manifold-adapted model with scalar coefficients.
+}
+\seealso{
+\link{euc.coordvec_lags}, \link{spd.coordvec_lags}, \link{cor.coordvec_lags}.
 }

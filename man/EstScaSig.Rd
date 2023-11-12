@@ -2,23 +2,23 @@
 % Please edit documentation in R/MLE.R
 \name{EstScaSig}
 \alias{EstScaSig}
-\title{estimate Sigma in scalar model}
+\title{Standard deviation in the manifold-adapted model with scalar coefficients}
 \usage{
 EstScaSig(v, lagv, theta)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.}
 
-\item{theta}{estimated alpha}
+\item{theta}{A vector of estimated regressive coefficients from the output of \code{\link[=EstScaTheta]{EstScaTheta()}}.}
 }
 \value{
-estimated sigma
+Estimated standard deviation of the white noise in the model.
 }
 \description{
-estimate Sigma in scalar model
+Compute standard deviation of white noise in the manifold-adapted model with scalar coefficients.
 }
 \seealso{
-The whole function could find in function \code{\link[=MLE.Sca]{MLE.Sca()}},\code{\link[=EstSca]{EstSca()}},\code{\link[=EstScaTheta]{EstScaTheta()}}
+\code{\link[=EstScaTheta]{EstScaTheta()}}.
 }

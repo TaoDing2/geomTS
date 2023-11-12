@@ -2,19 +2,25 @@
 % Please edit documentation in R/MLE.R
 \name{AICDiag}
 \alias{AICDiag}
-\title{AIC and log-likelihood}
+\title{AIC values for manifold-adapted model with scalar coefficients}
 \usage{
 AICDiag(v, lagv, Theta, Sigma)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.}
 
-\item{Theta}{estimated A}
+\item{Theta}{A list of estimated diagonal regressive coefficients with the length of \eqn{q} from the output of \code{\link[=EstScaTheta]{EstScaTheta()}}.}
 
-\item{Sigma}{estimated Sigma}
+\item{Sigma}{A vector of estimated diagonals of standard deviation for the white noise from the output of \link{EstDiagSig}.}
+}
+\value{
+AIC and log-likelihood function values
 }
 \description{
-AIC and log-likelihood
+AIC values for manifold-adapted model with scalar coefficients
+}
+\seealso{
+\code{\link[=EstScaTheta]{EstScaTheta()}},\code{\link[=EstDiagSig]{EstDiagSig()}}.
 }

@@ -1,25 +1,32 @@
-#' Simulate SPD matrices
-#' @description Simulate SPD matrices in \eqn{\mathcal{S}_p^+}
+#' Simulate SPD matrices under the framework of manifold-adapted time series model with scalar coefficients
+#' @description
+#'  Simulating SPD matrices in affine invariant manifold \eqn{\mathcal{S}_p^+} according to the mean-reverting autoregressive model
+#' with scalar coefficients.
 #'
-#' @param n Number of time points
-#' @param alpha Coefficients in VAR model whose length is the lags of VAR terms
+#' @param n Number of total simulated time points.
+#' @param alpha A vector. It represents the autoregressive coefficients.
 #' @param sigma Standard deviation of white noise
-#' @param beta Coefficient of mean reversion. It follows the attract point/ Mean
-#' @param attS Attract point.
-#' @param p Dimensions if \code{beta} and \code{attS} are missing.
+#' @param beta The regression coefficient of mean reverting term. It should be given when \code{attS} is not \code{NULL}.
+#' @param attS An attract point in \eqn{\mathcal{S}_p^+}. It should be given when \code{beta} is not \code{NULL}.
+#' @param p The dimension \eqn{p}, if \code{beta} and \code{attS} are missing.
 #'
-#' @return A array data \eqn{p \times p \times n}
+#' @return An  \eqn{p \times p \times n} array data in \eqn{\mathcal{S}_p^+}.
 #' @export
 #'
-spd.simulate <- function(n,alpha,sigma,beta =NULL,attS= NULL,p = NULL){
+spd.simulate <- function(n,alpha,sigma,beta = NULL,attS= NULL,p = NULL){
   if(is.null(p)){
-    p = dim(attS)[1]
+    if(!is.null(attS)) {
+      p = dim(attS)[1]
+    } else {
+      stop("Please input the dimension of p")
+    }
   }
-  m    <- 0.5*p*(p+1)     # dimensions
-  q = length(alpha)
+  m   <- 0.5*p*(p+1)  # dimensions
+  q = length(alpha)   # lags
   ###
   ### initial points
   ###
+  # We generate the initial data points from [CovM()]
   S <- array(0,c(p,p,n))
   for(i in 1:(q+1)){
     S[,,i] <- CovM(p)
@@ -62,11 +69,11 @@ spd.simulate <- function(n,alpha,sigma,beta =NULL,attS= NULL,p = NULL){
     # project back to tangent space
     matV <- matrix(0,p,p)
     for(r in 1:m){
-      matV <- matV + newv[i,r] * sqrtm(S[,,i])%*%E[[r]]%*%sqrtm(S[,,i])
+      matV <- matV + newv[i,r] * sqrtm(S[,,i])%*% E[[r]] %*%sqrtm(S[,,i])
     }
     newV[[i]] <- matV
     # Exponential map
-    S[,,i+1] <- spd.ExpMap(S[,,i],matV)
+    S[,,i+1] = spd.ExpMap(S[,,i],matV)
   }
   return(S)
 }

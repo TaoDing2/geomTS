@@ -2,20 +2,23 @@
 % Please edit documentation in R/MLE.R
 \name{residMat.Sca}
 \alias{residMat.Sca}
-\title{Compute residual matrix for scalar coefficient model}
+\title{Residual matrix after model fitting with scalar coefficient}
 \usage{
 residMat.Sca(v, lagv, theta)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.}
 
-\item{theta}{estimated alpha}
+\item{theta}{A vector of estimated regressive coefficients from the output of \code{\link[=EstScaTheta]{EstScaTheta()}}.}
 }
 \value{
-residual matrix
+Residual matrix which has the same dimension with  \code{v}.
 }
 \description{
-Compute residual matrix for scalar coefficient model
+Residual matrix after model fitting with scalar coefficient
+}
+\seealso{
+\code{\link[=EstScaTheta]{EstScaTheta()}}.
 }

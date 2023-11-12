@@ -2,22 +2,25 @@
 % Please edit documentation in R/MLE.R
 \name{AICSca}
 \alias{AICSca}
-\title{Model selection by AIC}
+\title{AIC values for manifold-adapted model with scalar coefficients}
 \usage{
 AICSca(v, lagv, theta, sigma)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.}
 
-\item{theta}{estimated alpha}
+\item{theta}{A vector of estimated regressive coefficients from the output of \code{\link[=EstScaTheta]{EstScaTheta()}}.}
 
-\item{sigma}{estimated sigma}
+\item{sigma}{Estimated standard deviation of the white noise from the output of function \code{\link[=EstScaSig]{EstScaSig()}}.}
 }
 \value{
-AIC values and log-likelihood
+AIC and log-likelihood function values
 }
 \description{
-Model selection by AIC
+AIC values for manifold-adapted model with scalar coefficients
+}
+\seealso{
+\code{\link[=EstScaTheta]{EstScaTheta()}},\code{\link[=EstScaSig]{EstScaSig()}}.
 }

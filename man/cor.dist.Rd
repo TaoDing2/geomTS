@@ -4,13 +4,15 @@
 \alias{cor.dist}
 \title{Distance matrix using quotient metric}
 \usage{
-cor.dist(S, parallel = NULL)
+cor.dist(S, parallel = NULL, ncores = NULL)
 }
 \arguments{
 \item{S}{An \eqn{p \times p \times n} array data consisting of full rank correlation matrices.}
 
 \item{parallel}{Logical value with default \code{FALSE}.When it is \code{TRUE},
 we use parallel computation to compute distance matrix.}
+
+\item{ncores}{The number of cores used in the parallel computation.}
 }
 \value{
 Distance object as \code{\link[=dist]{dist()}}.

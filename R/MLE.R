@@ -1,11 +1,21 @@
-#' MLE for VAR model with scalar coefficients
+#' MLE for manifold-adapted model with scalar coefficients
+#' @description
+#' Model inference by MLE for manifold-adapted model with scalar coefficients.
 #'
-#' @param lagvec lagged results obtained from functions [spd.coordvec_lags] or [cor.coordvec_lags]
-#' @param maxlag maximum lags with default 10
-#' @param Mean Logical values. True for involving Mean reversion, vice versa.
+#' @param lagvec Lagged vector results obtained from functions [euc.coordvec_lags], [spd.coordvec_lags] nor [cor.coordvec_lags].
+#' @param maxlag Maximum lag with default value of \code{10}.
+#' @param Mean Logical value with default value of \code{FALSE}. When it is \code{TRUE}, we will consider the mean reverting term
+#' in our manifold-adapted time series model, vice versa.
 #'
-#' @return estimated parameters and AIC values for different lags
+#' @return Estimated parameters and model parameters, including \describe{
+#' \item{theta}{Estimated parameters of autoregressive terms and mean reverting term (if \code{Mean} is \code{TRUE}).}
+#' \item{sigma}{Estimated standard deviation of the white noise in the model.}
+#' \item{AIC}{AIC value.}
+#' \item{loglik}{log-likelihood function value.}
+#' }
+#'
 #' @export
+#' @seealso [euc.coordvec_lags], [spd.coordvec_lags], [cor.coordvec_lags].
 #'
 # examples S = lapply(1:21, function(i) CovM(5))
 # S = list2array(S)
@@ -45,15 +55,20 @@ MLE.Sca <- function(lagvec,maxlag = NULL,Mean = NULL){
   return(reslags)
 }
 
-#' Estimate Parameters in the model with scalar coefficients
+#' Coefficients in the manifold-adapted model with scalar coefficients
+#' @description
+#' Estimate coefficients in the manifold-adapted model with scalar coefficients,
+#' including coefficients in regressive terms and standard deviation of the white noise.
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
 #'
-#' @return estimated scalar coefficients
+#' @return Estimated scalar coefficients, including \describe{
+#' \item{theta}{Estimated scalar regressive coefficients.}
+#' \item{sigma}{Estimated standard deviation of the white noise.}
+#' }
 #' @export
 #'
-#' @seealso The whole function could find in function [MLE.Sca()]
 EstSca <- function(v,lagv){
   # Estimate alpha
   theta <- EstScaTheta(v,lagv)
@@ -63,15 +78,16 @@ EstSca <- function(v,lagv){
   return(output)
 }
 
-#' Estimate alpha
+#' Regressive coefficients in the manifold-adapted model with scalar coefficients
+#' @description
+#' Compute regressive coefficients in the manifold-adapted model with scalar coefficients.
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors that each of it has the same structure with \code{v}.
 #'
-#' @return estimated alpha
+#' @return A vector of estimated regressive coefficients.
 #' @export
 #'
-#' @seealso The whole function could find in function [MLE.Sca()] and [EstSca()]
 EstScaTheta <- function(v,lagv){
   N <- nrow(lagv[[1]])
   m <- ncol(lagv[[1]])
@@ -94,16 +110,18 @@ EstScaTheta <- function(v,lagv){
   return(theta)
 }
 
-#' estimate Sigma in scalar model
+#' Standard deviation in the manifold-adapted model with scalar coefficients
+#' @description
+#' Compute standard deviation of white noise in the manifold-adapted model with scalar coefficients.
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
-#' @param theta estimated alpha
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
+#' @param theta A vector of estimated regressive coefficients from the output of [EstScaTheta()].
 #'
-#' @return estimated sigma
+#' @return Estimated standard deviation of the white noise in the model.
 #' @export
 #'
-#' @seealso The whole function could find in function [MLE.Sca()],[EstSca()],[EstScaTheta()]
+#' @seealso [EstScaTheta()].
 EstScaSig <- function(v,lagv,theta){
   N <- nrow(lagv[[1]])
   m <- ncol(lagv[[1]])
@@ -118,15 +136,16 @@ EstScaSig <- function(v,lagv,theta){
   return(sig)
 }
 
-#' Compute residual matrix for scalar coefficient model
+#' Residual matrix after model fitting with scalar coefficient
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
-#' @param theta estimated alpha
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
+#' @param theta A vector of estimated regressive coefficients from the output of [EstScaTheta()].
 #'
-#' @return residual matrix
+#' @return Residual matrix which has the same dimension with  \code{v}.
 #' @export
 #'
+#' @seealso [EstScaTheta()].
 residMat.Sca <- function(v,lagv,theta){
   N <- nrow(lagv[[1]])
   m <- ncol(lagv[[1]])
@@ -143,16 +162,16 @@ residMat.Sca <- function(v,lagv,theta){
   return(ResidMat)
 }
 
-#' Model selection by AIC
+#' AIC values for manifold-adapted model with scalar coefficients
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
-#' @param theta estimated alpha
-#' @param sigma estimated sigma
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
+#' @param theta A vector of estimated regressive coefficients from the output of [EstScaTheta()].
+#' @param sigma Estimated standard deviation of the white noise from the output of function [EstScaSig()].
 #'
-#' @return AIC values and log-likelihood
+#' @return AIC and log-likelihood function values
 #' @export
-#'
+#' @seealso [EstScaTheta()],[EstScaSig()].
 AICSca <- function(v,lagv,theta,sigma){
   N <- nrow(lagv[[1]])
   m <- ncol(lagv[[1]])
@@ -172,15 +191,16 @@ AICSca <- function(v,lagv,theta,sigma){
   return(list(AIC = aic, loglik = loglik))
 }
 
-
-#' Outputs of model with scalar coefficients
+#' Print model coefficients in manifold-adapted model with scalar coefficients
 #'
-#' @param model results from function [MLE.Sca()]. The object could be either "MVAR" or "VAR"
-#' @param fixed.lag choose the results by a fixed lag
+#' @param model Results from function [MLE.Sca()]. It is the object of \code{VAR} for the model with autoregressive terms only
+#' or \code{MVAR} for the model with autoregressive and mean-reverting term.
+#' @param fixed.lag Fixed lag. If it is \code{NULL}, the AIC method is used to suggest model lags.
 #'
-#' @return estimated parameters
+#' @return A vector of estimated parameters.
 #' @export
 #'
+#' @seealso [MLE.Sca()]
 print_Sca <- function(model,fixed.lag = NULL){
   ### find proper lags
   if(is.null(fixed.lag)){
@@ -200,17 +220,27 @@ print_Sca <- function(model,fixed.lag = NULL){
   return(estpar)
 }
 
-################################################################################
-####
-#### MLE for the model with diagonal matrix coefficients
-####
-#' MLE for the model with diagonal matrix coefficients
+
+
+
+
+
+#' MLE for manifold-adapted model with diagonal coefficients
+#' @description
+#' Model inference by MLE for manifold-adapted model with diagonal coefficients.
 #'
-#' @param lagvec lagged vectors
-#' @param maxlag maximum lags
-#' @param Mean Logical values. True for involving Mean reversion, vice versa.
+#' @param lagvec Lagged vector results obtained from functions [euc.coordvec_lags], [spd.coordvec_lags] nor [cor.coordvec_lags].
+#' @param maxlag Maximum lag with default value of \code{10}.
+#' @param Mean Logical value with default value of \code{FALSE}. When it is \code{TRUE}, we will consider the mean reverting term
+#' in our manifold-adapted time series model, vice versa.
 #'
-#' @return  estimated parameters and AIC values for different lags
+#' @return Estimated parameters and model parameters, including \describe{
+#' \item{Theta}{A list of estimated diagonal coefficients of autoregressive terms and mean reverting term (if \code{Mean} is \code{TRUE}).}
+#' \item{Sigma}{A vector of estimated diagonals of standard deviation for the white noise}
+#' \item{AIC}{AIC values}
+#' \item{loglik}{log-likelihood function value.}
+#' }
+#'
 #' @export
 #'
 MLE.Diag <- function(lagvec,maxlag = NULL, Mean = NULL){
@@ -247,12 +277,20 @@ MLE.Diag <- function(lagvec,maxlag = NULL, Mean = NULL){
 }
 
 
-#' Estimate Parameters in diagonal matrix VAR model
+#' Diagonal coefficients in the manifold-adapted model with diagonal coefficients
+#' @description
+#' Estimate diagonal coefficients in the manifold-adapted model with diagonal coefficients,
+#' including coefficients in regressive terms and standard deviation of the white noise.
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
 #'
+#' @return Estimated diagonal coefficients, including \describe{
+#' \item{Theta}{A list of estimated diagonal regressive coefficients.}
+#' \item{Sigma}{A vector of estimated diagonals of standard deviation for the white noise}
+#' }
 #' @export
+#'
 EstDiag <- function(v,lagv){
   # Estimate alpha
   Theta <- EstDiagTheta(v,lagv)
@@ -262,12 +300,12 @@ EstDiag <- function(v,lagv){
   return(output)
 }
 
-#' Estimate diagonal matrices A in VAR model
+#' Regressive coefficients in the manifold-adapted model with diagonal coefficients
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
 #'
-#' @return estimated diagonals of coefficients
+#' @return A list of estimated diagonal regressive coefficients with the length of \eqn{q}.
 #' @export
 #'
 EstDiagTheta <- function(v,lagv){
@@ -330,15 +368,17 @@ EstDiagTheta <- function(v,lagv){
 }
 
 
-#' Estimate diagonals of Sigma in VAR model
+#' Standard deviation in the manifold-adapted model with diagonal coefficients
+#' @description
+#' Compute standard deviation of white noise in the manifold-adapted model with diagonal coefficients.
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
-#' @param Theta estimated diagonals of coefficients in VAR models
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
+#' @param Theta A list of estimated diagonal regressive coefficients with the length of \eqn{q} from the output of [EstScaTheta()].
 #'
-#' @return estimated diagonal of Sigma
-
+#' @return A vector of diagonal stimated diagonal of Sigma
 #' @export
+#' @seealso [EstScaTheta()]
 EstDiagSig <- function(v,lagv,Theta){
   m <- ncol(lagv[[1]])
   N <- nrow(lagv[[1]]) # No. time points
@@ -362,15 +402,15 @@ EstDiagSig <- function(v,lagv,Theta){
   return(Sig)
 }
 
-#' Compute residual matrix for diagonal matrix coefficient
+#' Residual matrix after model fitting with diagonal coefficient
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
-#' @param Theta estimated alpha
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
+#' @param Theta A list of estimated diagonal regressive coefficients with the length of \eqn{q} from the output of [EstScaTheta()].
 #'
-#' @return residual matrix
+#' @return Residual matrix which has the same dimension with  \code{v}.
 #' @export
-#'
+#' @seealso [EstScaTheta()]
 residMat.Diag <- function(v,lagv,Theta){
   m <- ncol(lagv[[1]])
   N <- nrow(lagv[[1]]) # No. time points
@@ -389,14 +429,16 @@ residMat.Diag <- function(v,lagv,Theta){
   return(ResidMat)
 }
 
-#' AIC and log-likelihood
+#' AIC values for manifold-adapted model with scalar coefficients
 #'
-#' @param v vectors
-#' @param lagv lagged vectors
-#' @param Theta estimated A
-#' @param Sigma estimated Sigma
+#' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
+#' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
+#' @param Theta A list of estimated diagonal regressive coefficients with the length of \eqn{q} from the output of [EstScaTheta()].
+#' @param Sigma A vector of estimated diagonals of standard deviation for the white noise from the output of [EstDiagSig].
 #'
 #' @export
+#' @return AIC and log-likelihood function values
+#' @seealso  [EstScaTheta()],[EstDiagSig()].
 AICDiag <- function(v,lagv,Theta,Sigma){
   m <- ncol(lagv[[1]])
   N <- nrow(lagv[[1]]) # No. time points

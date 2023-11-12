@@ -2,20 +2,23 @@
 % Please edit documentation in R/MLE.R
 \name{residMat.Diag}
 \alias{residMat.Diag}
-\title{Compute residual matrix for diagonal matrix coefficient}
+\title{Residual matrix after model fitting with diagonal coefficient}
 \usage{
 residMat.Diag(v, lagv, Theta)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.}
 
-\item{Theta}{estimated alpha}
+\item{Theta}{A list of estimated diagonal regressive coefficients with the length of \eqn{q} from the output of \code{\link[=EstScaTheta]{EstScaTheta()}}.}
 }
 \value{
-residual matrix
+Residual matrix which has the same dimension with  \code{v}.
 }
 \description{
-Compute residual matrix for diagonal matrix coefficient
+Residual matrix after model fitting with diagonal coefficient
+}
+\seealso{
+\code{\link[=EstScaTheta]{EstScaTheta()}}
 }

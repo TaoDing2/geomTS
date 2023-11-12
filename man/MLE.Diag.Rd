@@ -2,20 +2,26 @@
 % Please edit documentation in R/MLE.R
 \name{MLE.Diag}
 \alias{MLE.Diag}
-\title{MLE for the model with diagonal matrix coefficients}
+\title{MLE for manifold-adapted model with diagonal coefficients}
 \usage{
 MLE.Diag(lagvec, maxlag = NULL, Mean = NULL)
 }
 \arguments{
-\item{lagvec}{lagged vectors}
+\item{lagvec}{Lagged vector results obtained from functions \link{euc.coordvec_lags}, \link{spd.coordvec_lags} nor \link{cor.coordvec_lags}.}
 
-\item{maxlag}{maximum lags}
+\item{maxlag}{Maximum lag with default value of \code{10}.}
 
-\item{Mean}{Logical values. True for involving Mean reversion, vice versa.}
+\item{Mean}{Logical value with default value of \code{FALSE}. When it is \code{TRUE}, we will consider the mean reverting term
+in our manifold-adapted time series model, vice versa.}
 }
 \value{
-estimated parameters and AIC values for different lags
+Estimated parameters and model parameters, including \describe{
+\item{Theta}{A list of estimated diagonal coefficients of autoregressive terms and mean reverting term (if \code{Mean} is \code{TRUE}).}
+\item{Sigma}{A vector of estimated diagonals of standard deviation for the white noise}
+\item{AIC}{AIC values}
+\item{loglik}{log-likelihood function value.}
+}
 }
 \description{
-MLE for the model with diagonal matrix coefficients
+Model inference by MLE for manifold-adapted model with diagonal coefficients.
 }

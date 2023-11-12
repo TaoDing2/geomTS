@@ -30,6 +30,7 @@ euc.dist <- function(S){
 #' @param S An \eqn{p \times p \times n} array data consisting of SPD matrices.
 #' @param parallel Logical value with default \code{FALSE}.When it is \code{TRUE},
 #' we use parallel computation to compute distance matrix.
+#' @param ncores The number of cores used in the parallel computation.
 #'
 #' @return Distance object as [dist()].
 #' @export
@@ -42,7 +43,7 @@ euc.dist <- function(S){
 #' data(EEG)
 #' redEEG = DR_PCA(EEG$seizure1,N0 = 15)
 #' spd.dist(redEEG)
-spd.dist <- function(S,parallel = NULL){
+spd.dist <- function(S,parallel = NULL,ncores = NULL){
   N = dim(S)[3]
   if(is.null(parallel)) parallel = FALSE
   if(parallel) {
@@ -50,7 +51,8 @@ spd.dist <- function(S,parallel = NULL){
     ind = combn(N,2)
     n = ncol(ind)
     # No. of cores used
-    registerDoParallel(detectCores()-2)
+    if(is.null(ncores)) ncores = detectCores() - 2
+    registerDoParallel(ncores)
     dc <- foreach(i = 1:n)%dopar%{
       return(spd.metric(S[,,ind[1,i]],S[,,ind[2,i]]))
     }
@@ -74,6 +76,8 @@ spd.dist <- function(S,parallel = NULL){
 #' @param S An \eqn{p \times p \times n} array data consisting of full rank correlation matrices.
 #' @param parallel Logical value with default \code{FALSE}.When it is \code{TRUE},
 #' we use parallel computation to compute distance matrix.
+#' @param ncores The number of cores used in the parallel computation.
+#'
 #' @return Distance object as [dist()].
 #' @export
 #'
@@ -85,7 +89,7 @@ spd.dist <- function(S,parallel = NULL){
 #' S = lapply(1:10, function(i) CorrM(5))
 #' S = list2array(S)
 #' cor.dist(S)
-cor.dist <- function(S,parallel = NULL){
+cor.dist <- function(S,parallel = NULL,ncores = NULL){
   N = dim(S)[3]
   if(is.null(parallel)) parallel = FALSE
   if(parallel) {
@@ -93,7 +97,8 @@ cor.dist <- function(S,parallel = NULL){
     ind = combn(N,2)
     n = ncol(ind)
     # No. of cores used
-    registerDoParallel(detectCores()-2)
+    if(is.null(ncores)) ncores = detectCores() - 2
+    registerDoParallel(ncores)
     dc <- foreach(i = 1:n)%dopar%{
       return(cor.metric(S[,,ind[1,i]],S[,,ind[2,i]]))
     }

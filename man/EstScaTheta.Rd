@@ -2,21 +2,18 @@
 % Please edit documentation in R/MLE.R
 \name{EstScaTheta}
 \alias{EstScaTheta}
-\title{Estimate alpha}
+\title{Regressive coefficients in the manifold-adapted model with scalar coefficients}
 \usage{
 EstScaTheta(v, lagv)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors that each of it has the same structure with \code{v}.}
 }
 \value{
-estimated alpha
+A vector of estimated regressive coefficients.
 }
 \description{
-Estimate alpha
-}
-\seealso{
-The whole function could find in function \code{\link[=MLE.Sca]{MLE.Sca()}} and \code{\link[=EstSca]{EstSca()}}
+Compute regressive coefficients in the manifold-adapted model with scalar coefficients.
 }

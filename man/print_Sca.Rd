@@ -2,18 +2,22 @@
 % Please edit documentation in R/MLE.R
 \name{print_Sca}
 \alias{print_Sca}
-\title{Outputs of model with scalar coefficients}
+\title{Print model coefficients in manifold-adapted model with scalar coefficients}
 \usage{
 print_Sca(model, fixed.lag = NULL)
 }
 \arguments{
-\item{model}{results from function \code{\link[=MLE.Sca]{MLE.Sca()}}. The object could be either "MVAR" or "VAR"}
+\item{model}{Results from function \code{\link[=MLE.Sca]{MLE.Sca()}}. It is the object of \code{VAR} for the model with autoregressive terms only
+or \code{MVAR} for the model with autoregressive and mean-reverting term.}
 
-\item{fixed.lag}{choose the results by a fixed lag}
+\item{fixed.lag}{Fixed lag. If it is \code{NULL}, the AIC method is used to suggest model lags.}
 }
 \value{
-estimated parameters
+A vector of estimated parameters.
 }
 \description{
-Outputs of model with scalar coefficients
+Print model coefficients in manifold-adapted model with scalar coefficients
+}
+\seealso{
+\code{\link[=MLE.Sca]{MLE.Sca()}}
 }

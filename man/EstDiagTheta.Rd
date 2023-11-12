@@ -2,18 +2,18 @@
 % Please edit documentation in R/MLE.R
 \name{EstDiagTheta}
 \alias{EstDiagTheta}
-\title{Estimate diagonal matrices A in VAR model}
+\title{Regressive coefficients in the manifold-adapted model with diagonal coefficients}
 \usage{
 EstDiagTheta(v, lagv)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.}
 }
 \value{
-estimated diagonals of coefficients
+A list of estimated diagonal regressive coefficients with the length of \eqn{q}.
 }
 \description{
-Estimate diagonal matrices A in VAR model
+Regressive coefficients in the manifold-adapted model with diagonal coefficients
 }

@@ -2,21 +2,22 @@
 % Please edit documentation in R/MLE.R
 \name{EstSca}
 \alias{EstSca}
-\title{Estimate Parameters in the model with scalar coefficients}
+\title{Coefficients in the manifold-adapted model with scalar coefficients}
 \usage{
 EstSca(v, lagv)
 }
 \arguments{
-\item{v}{vectors}
+\item{v}{A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.}
 
-\item{lagv}{lagged vectors}
+\item{lagv}{A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.}
 }
 \value{
-estimated scalar coefficients
+Estimated scalar coefficients, including \describe{
+\item{theta}{Estimated scalar regressive coefficients.}
+\item{sigma}{Estimated standard deviation of the white noise.}
+}
 }
 \description{
-Estimate Parameters in the model with scalar coefficients
-}
-\seealso{
-The whole function could find in function \code{\link[=MLE.Sca]{MLE.Sca()}}
+Estimate coefficients in the manifold-adapted model with scalar coefficients,
+including coefficients in regressive terms and standard deviation of the white noise.
 }
