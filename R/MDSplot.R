@@ -37,6 +37,7 @@ euc.dist <- function(S){
 #'
 #' @import doParallel
 #' @import foreach
+#' @importFrom  parallel detectCores
 #'
 #' @seealso [spd.metric()]
 #' @examples

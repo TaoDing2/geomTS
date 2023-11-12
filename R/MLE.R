@@ -11,6 +11,7 @@
 #' \item{theta}{Estimated parameters of autoregressive terms and mean reverting term (if \code{Mean} is \code{TRUE}).}
 #' \item{sigma}{Estimated standard deviation of the white noise in the model.}
 #' \item{AIC}{AIC value.}
+#' \item{BIC}{BIC value.}
 #' \item{loglik}{log-likelihood function value.}
 #' }
 #'
@@ -39,12 +40,13 @@ MLE.Sca <- function(lagvec,maxlag = NULL,Mean = NULL){
     estpar <- EstSca(v,lagv)
     theta <- estpar$theta
     sigma <- estpar$sigma
-    # AIC and log-likelihood value
-    AICres<- AICSca(v,lagv,theta,sigma)
-    AIC = AICres$AIC
-    loglik =  AICres$loglik
+    # model selection and log-likelihood value
+    res <- modselectSca(v,lagv,theta,sigma)
+    AIC = res$AIC
+    BIC = res$BIC
+    loglik =  res$loglik
     # store the result
-    reslags[[q]] <- list(theta = theta, sigma = sigma,AIC = AIC,liglik = loglik)
+    reslags[[q]] <- list(theta = theta, sigma = sigma,AIC = AIC,BIC = BIC, loglik = loglik)
   }
   names(reslags) <- paste("lag",1:maxlag)
   if(Mean){
@@ -162,17 +164,17 @@ residMat.Sca <- function(v,lagv,theta){
   return(ResidMat)
 }
 
-#' AIC values for manifold-adapted model with scalar coefficients
+#' Model selection for manifold-adapted model with scalar coefficients
 #'
 #' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
 #' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
 #' @param theta A vector of estimated regressive coefficients from the output of [EstScaTheta()].
 #' @param sigma Estimated standard deviation of the white noise from the output of function [EstScaSig()].
 #'
-#' @return AIC and log-likelihood function values
+#' @return AIC , BIC, and log-likelihood function values
 #' @export
 #' @seealso [EstScaTheta()],[EstScaSig()].
-AICSca <- function(v,lagv,theta,sigma){
+modselectSca <- function(v,lagv,theta,sigma){
   N <- nrow(lagv[[1]])
   m <- ncol(lagv[[1]])
   q <- length(lagv)
@@ -185,10 +187,11 @@ AICSca <- function(v,lagv,theta,sigma){
   }
   # log-likelihood value
   loglik <- - 0.5 * m * N * log(2*pi) - m * N * log(sigma) - 0.5 * (1/sigma^2) * RSS
-  # AIC and corrected AIC
-  K <- q+1 # number of parameters
+  # AIC and BIC
+  K <- q + 1 # number of parameters
   aic <- 2 * K - 2 * loglik
-  return(list(AIC = aic, loglik = loglik))
+  bic <- K*log(N) - 2*loglik
+  return(list(AIC = aic,BIC = bic, loglik = loglik))
 }
 
 #' Print model coefficients in manifold-adapted model with scalar coefficients
@@ -196,20 +199,26 @@ AICSca <- function(v,lagv,theta,sigma){
 #' @param model Results from function [MLE.Sca()]. It is the object of \code{VAR} for the model with autoregressive terms only
 #' or \code{MVAR} for the model with autoregressive and mean-reverting term.
 #' @param fixed.lag Fixed lag. If it is \code{NULL}, the AIC method is used to suggest model lags.
-#'
+#' @param modelselection Type of model selection criterion, either \code{AIC} or \code{BIC}. The default value is \code{AIC} and
+#' if \code{modelselection} is \code{NULL}.
 #' @return A vector of estimated parameters.
 #' @export
 #'
 #' @seealso [MLE.Sca()]
-print_Sca <- function(model,fixed.lag = NULL){
+print_Sca <- function(model,fixed.lag = NULL,modelselection = c("AIC","BIC")){
+  if(is.null(modelselection)) modelselection = "AIC"
   ### find proper lags
   if(is.null(fixed.lag)){
-    aic <- c()
+    abic <- c()
     maxlag <- length(model)
     for(q in 1:maxlag){
-      aic[q] <- model[[q]]$AIC
+      if(modelselection == "AIC") {
+        abic[q] <- model[[q]]$AIC
+      } else {
+        abic[q] <- model[[q]]$BIC
+      }
     }
-    fixed.lag <- which.min(aic)
+    fixed.lag <- which.min(abic)
   }
   estpar <- c(model[[fixed.lag]]$theta, model[[fixed.lag]]$sigma)
   if(inherits(model,"VAR")){
@@ -238,6 +247,7 @@ print_Sca <- function(model,fixed.lag = NULL){
 #' \item{Theta}{A list of estimated diagonal coefficients of autoregressive terms and mean reverting term (if \code{Mean} is \code{TRUE}).}
 #' \item{Sigma}{A vector of estimated diagonals of standard deviation for the white noise}
 #' \item{AIC}{AIC values}
+#' \item{BIC}{BIC values}
 #' \item{loglik}{log-likelihood function value.}
 #' }
 #'
@@ -261,11 +271,12 @@ MLE.Diag <- function(lagvec,maxlag = NULL, Mean = NULL){
     Theta <- estpar$Theta
     Sigma <- estpar$Sigma
     # AIC
-    AICres <- AICDiag(v,lagv,Theta,Sigma)
-    AIC = AICres$AIC
-    loglik = AICres$loglik
+    res <- modselectDiag(v,lagv,Theta,Sigma)
+    AIC = res$AIC
+    BIC = res$BIC
+    loglik = res$loglik
     # store the result
-    reslags[[q]] <- list(Theta = Theta,Sigma = Sigma,AIC = AIC, loglik = loglik)
+    reslags[[q]] <- list(Theta = Theta,Sigma = Sigma,AIC = AIC, BIC = BIC, loglik = loglik)
   }
   names(reslags) <- paste("lag",1:maxlag)
   if(Mean){
@@ -429,7 +440,7 @@ residMat.Diag <- function(v,lagv,Theta){
   return(ResidMat)
 }
 
-#' AIC values for manifold-adapted model with scalar coefficients
+#' Model selection values for manifold-adapted model with scalar coefficients
 #'
 #' @param v A \eqn{n \times m} matrix with \eqn{m} dimensions and \eqn{n} observations.
 #' @param lagv A list data with the length of \eqn{q} containing lagged vectors  that each of it has the same structure with \code{v}.
@@ -437,9 +448,9 @@ residMat.Diag <- function(v,lagv,Theta){
 #' @param Sigma A vector of estimated diagonals of standard deviation for the white noise from the output of [EstDiagSig].
 #'
 #' @export
-#' @return AIC and log-likelihood function values
+#' @return Model selection and log-likelihood function values
 #' @seealso  [EstScaTheta()],[EstDiagSig()].
-AICDiag <- function(v,lagv,Theta,Sigma){
+modselectDiag <- function(v,lagv,Theta,Sigma){
   m <- ncol(lagv[[1]])
   N <- nrow(lagv[[1]]) # No. time points
   q <- length(lagv)       # lags
@@ -449,9 +460,10 @@ AICDiag <- function(v,lagv,Theta,Sigma){
   ### log-likelihood
   tmp<- sum(sapply(1:N, function(i) t(ResidMat[i,])%*%solve(Sig)%*%ResidMat[i,]))
   loglik <- -0.5 * m * N * log(2*pi) - 0.5*N * log(det(Sig)) - 0.5*tmp
-  # AIC and corrected AIC
+  # AIC and BIC
   K <- (q+1)*m # number of parameters
   aic <- 2 * K - 2 * loglik
-  return(list(AIC = aic, loglik = loglik))
+  bic <- K*log(N) - 2*loglik
+  return(list(AIC = aic, BIC = bic, loglik = loglik))
 }
 

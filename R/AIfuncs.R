@@ -271,12 +271,14 @@ spd.Euc2Manif <- function(v,S){
 #' Compute Frechet sample mean in affine invariant geometry \eqn{\mathcal{S}_p^+}
 #'
 #' @param S Array object with \eqn{p \times p \times n}.
-#' @param MaxIt Maximum iterations of algorithm
+#' @param MaxIt Maximum iterations of algorithm. The default value is 200.
 #' @param conver Threshold of convergence. Default value is \eqn{10^{-4}}
 #' @param dt Step size of algorithm. Normally, the default value is set  as 0.1.
 #' @param store.M Logical values with \code{FALSE} as default value. If it is \code{TRUE}, we will store the estimated means and variance for each iteration, vice versa.
-#' @param method Either "Sturm" (Sturm algorithm) nor "GD" (Graident descent algorithm).
+#' @param method Either "Sturm" (Sturm algorithm) nor "GD" (Gradient descent algorithm).
+#' When it is \code{NULL}, gradient algorithm is chosen by the default.
 #' @references \insertRef{lenglet2006statistics}{geomTS}
+#'
 #' \insertRef{sturm2003probability}{geomTS}
 #'
 #' @return Estimated Frechet mean (and Frechet variance at each iteration if store.M = \code{TRUE})
@@ -293,6 +295,7 @@ spd.mean = function(S,MaxIt = NULL,conver = NULL,dt = NULL,store.M = NULL, metho
   if(is.null(MaxIt)) MaxIt = 200
   if(is.null(conver)) conver = 4
   if(is.null(dt))  dt = 0.1
+  if(is.null(method)) method = "GD"
   ### store estimated means
   if (store.M == TRUE) {
     itS = list()

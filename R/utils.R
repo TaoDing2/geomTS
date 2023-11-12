@@ -347,3 +347,28 @@ MeanArray <- function(M, dim = NULL){
     return(sumM/d3)
   }
 }
+
+
+#' Squared matrix indices
+#' @description
+#' Generate squared matrix indices. It also generate all combinations of the elements of
+#' \eqn{p} taken x at a time.
+#'
+#' @param p Integer
+#'
+#' @return A matrix containing indices of upper triangular squared matrix.
+#' @export
+#'
+#' @seealso [combn()]
+#' @examples combn2(5)
+#' combn(5,2)
+combn2 <- function(p){
+  ### Index of x and y
+  indx = rep(1:p,p:1)
+  indy = c(1:p)
+  for(i in 2:p){
+    indy = c(indy,i:p)
+  }
+  return(rbind(indx,indy))
+}
+

@@ -82,7 +82,7 @@ asympCOV <- function(sigma,lagv){
   IM <- matrix(0, ncol = q+1,nrow= q+1)
   for(i in 1:q){
     for(j in 1:q){
-      IM[i,j] <- as.vector(lagv[[i]])%*%as.vector(lagv[[j]])/(sigma^2) ### i,j
+      IM[i,j] <- as.vector(lagv[[i]])%*%as.vector(lagv[[j]])/(sigma^2)
     }
   }
   IM[q+1,q+1] <- 2*m*n/(sigma^2)

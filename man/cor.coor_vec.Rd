@@ -11,7 +11,7 @@ cor.coor_vec(X, C, D = NULL)
 
 \item{C}{A correlation matrix in \eqn{\mathcal{C}_p^+}.}
 
-\item{D}{A diagonal matrix in group action \eqn{\mathcal{D}_p^+}. It makes \eqn{C_1, DC_2D \in \mathcal{S}_p^+} being in optimal positions.
+\item{D}{A diagonal matrix in group action \eqn{\mathcal{D}_p^+}. It makes \eqn{I_p, DCD \in \mathcal{S}_p^+} being in optimal positions.
 When it is \code{NULL}, we can obtain it from \code{\link[=D.optimal.position]{D.optimal.position()}}.}
 }
 \value{

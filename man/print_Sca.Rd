@@ -4,13 +4,16 @@
 \alias{print_Sca}
 \title{Print model coefficients in manifold-adapted model with scalar coefficients}
 \usage{
-print_Sca(model, fixed.lag = NULL)
+print_Sca(model, fixed.lag = NULL, modelselection = c("AIC", "BIC"))
 }
 \arguments{
 \item{model}{Results from function \code{\link[=MLE.Sca]{MLE.Sca()}}. It is the object of \code{VAR} for the model with autoregressive terms only
 or \code{MVAR} for the model with autoregressive and mean-reverting term.}
 
 \item{fixed.lag}{Fixed lag. If it is \code{NULL}, the AIC method is used to suggest model lags.}
+
+\item{modelselection}{Type of model selection criterion, either \code{AIC} or \code{BIC}. The default value is \code{AIC} and
+if \code{modelselection} is \code{NULL}.}
 }
 \value{
 A vector of estimated parameters.

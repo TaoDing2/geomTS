@@ -470,11 +470,8 @@ cor.ortho_basis <- function(C,D = NULL){
   # optimal position to I
   if(is.null(D)) D <- D.optimal.position(diag(p),C)
   S = phi(C,D)
-  # orthonormal basis in T_I of S
-  #  Note that the basis of horizontal space and tangent space T_I in C are the same
-  E = euc.ortho_basis(p)
-  horE = E[-diag_ind(p)]
-  horS = lapply(1:m, function(i) sqrtm(S)%*%horE[[i]]%*%sqrtm(S))
+  # orthonormal basis in T_S which is a horizontal space.
+  horS = hor.ortho_basis(S)
   # orthonormal basis in T_C
   EC = lapply(1:m, function(i) deri_submer(horS[[i]],S))
   return(EC)
@@ -482,23 +479,23 @@ cor.ortho_basis <- function(C,D = NULL){
 
 #' Orthonormal basis in horizontal space
 #' @description
-#' Construct orthonormal basis in the horizontal subspace \eqn{\mathcal{H}_S}.
+#' Construct orthonormal basis in the horizontal space \eqn{\mathcal{H}_S}.
 #'
 #' @param S A SPD matrix in \eqn{\mathcal{S}_p^+}.
 #'
 #' @return Orthonormal basis with the dimension of \eqn{m = p(p-1)/2}
 #' @export
 #'
+#' @note
+#' This functions only applies to the tangent space which is horizontal,
+#' i.e. the vertical components in tangent space \eqn{T_S\mathcal{S}_p^+} are all 0.
 #' @examples S = CovM(5)
 #' hor.ortho_basis(S)
 hor.ortho_basis <- function(S){
   p = dim(S)[1]
-  m = 0.5*p*(p-1)
-  # orthonormal basis in T_I of S
-  E = euc.ortho_basis(p)
-  ### Dimension of horizontal space
-  horE = E[-diag_ind(p)]
-  horS = lapply(1:m, function(i) sqrtm(S)%*%horE[[i]]%*%sqrtm(S))
+  # orthonormal basis in T_S
+  ES = spd.ortho_basis(S)
+  horS = ES[-diag_ind(p)]
   return(horS)
 }
 
@@ -508,7 +505,7 @@ hor.ortho_basis <- function(S){
 #'
 #' @param X A tangent vector matrix in \eqn{T_{C}\mathcal{C}_p^+}.
 #' @param C A correlation matrix in \eqn{\mathcal{C}_p^+}.
-#' @param D A diagonal matrix in group action \eqn{\mathcal{D}_p^+}. It makes \eqn{C_1, DC_2D \in \mathcal{S}_p^+} being in optimal positions.
+#' @param D A diagonal matrix in group action \eqn{\mathcal{D}_p^+}. It makes \eqn{I_p, DCD \in \mathcal{S}_p^+} being in optimal positions.
 #' When it is \code{NULL}, we can obtain it from [D.optimal.position()].
 #'
 #' @return  A coordinate vector in \eqn{\mathbb{R}^m}
@@ -532,27 +529,28 @@ cor.coor_vec <- function(X,C,D = NULL){
   return(u)
 }
 
-#' Frechet mean by Sturm algorithm in quotient geometry
-#' @description Compute Frechet sample mean in quotient geometry \eqn{\mathcal{C}_p^+}.
-#'
+#' Frechet mean in quotient geometry
+#' @description
+#' Compute Frechet sample mean in quotient geometry \eqn{\mathcal{C}_p^+}
 #' @param C Array object with \eqn{p \times p \times n}.
-#' @param MaxIt Maximum iterations of algorithm.
-#' @param store.est Logical values with \code{FALSE} as default value. If it is \code{TRUE}, we will store the estimated means for each iteration, vice versa.
-#' @param store.fsv Logical values with \code{FALSE} as default value. If it is \code{TRUE}, we will store the estimated variance for each iteration, vice versa.
+#' @param MaxIt Maximum iterations of algorithm. The default value is 150.
+#' @param store.M Logical values with \code{FALSE} as default value.
+#' If it is \code{TRUE}, we will store the estimated means for each iteration, vice versa.
 #'
-#' @return Frechet mean
+#' @return Estimated Frechet mean (and each iteration if store.M = \code{TRUE})
 #' @export
 #'
-cor.mean_Sturm = function(C,MaxIt,store.est=FALSE,store.fsv=FALSE) {
-  if(is.null(store.est))  store.est = FALSE
-  if(is.null(store.fsv))  store.fsv = FALSE
-  # store Frechet variance
-  if (store.fsv == TRUE) {
-    fsv = c()
-  }
+#' @examples
+#' S = lapply(1:10, function(i) CorrM(5))
+#' S = list2array(S)
+#' FM = cor.mean(S,MaxIt = 50,store.M = TRUE)
+#' FM$mean
+cor.mean = function(C,MaxIt,store.M = NULL) {
+  if(is.null(store.M))  store.M = FALSE
+  if(is.null(MaxIt)) MaxIt = 150
   # store estimated means
-  if (store.est == TRUE) {
-    Sk = list()
+  if (store.M ) {
+    upC = list()
   }
   # No. of data points
   n = dim(C)[3]
@@ -570,28 +568,56 @@ cor.mean_Sturm = function(C,MaxIt,store.est=FALSE,store.fsv=FALSE) {
     j = sample(c(1:n),1)
     ranC = C[,,j]
     new.est = cor.geodesic(1/(k+1), old.est,ranC)
-    if (store.est == TRUE) {
-      Sk[[k]] = new.est
-    }
-    if (store.fsv == TRUE) {
-      omega = 0
-      for (i in 1:n){
-        omega = omega + (cor.metric(new.est, C[,,i])^2)/n
-      }
-      fsv[k] = omega
-    }
     old.est = new.est
+    if (store.M) {
+      # store updated mean
+      upC[[k]] = old.est
+    }
   }
-  if (store.est == TRUE && store.fsv == TRUE) {
-    Results = list(mean = new.est, ests = Sk, frechetsv = fsv)
-  } else if (store.est == TRUE && store.fsv == FALSE) {
-    Results = list(mean = new.est, ests = Sk)
-  } else if (store.est == FALSE && store.fsv == TRUE) {
-    Results = list(mean = new.est, frechetsv = fsv)
+  if (store.M) {
+    results = list(mean = old.est, itS = upC)
   } else {
-    Results = new.est
+    results = old.est
   }
-  return(Results)
+  return(results)
+}
+
+#' Frechet variance in quotient geometry
+#' @description
+#' Compute Frechet sample variance in quotient geometry \eqn{\mathcal{C}_p^+}
+#'
+#' @param C Array object with \eqn{p \times p \times n}.
+#' @param FM Frechet sample mean. It is obtained from [cor.mean()]
+#' @param parallel Logical values with \code{FALSE} as default value.
+#' If it is \code{TRUE}, we will compute Frechet sample variance by parallel computation, vice versa.
+#' @param ncore Numer of cores used in parallel computation.
+#'
+#' @return A numerical value to Frechet function
+#' @export
+#'
+#' @examples
+#' S = lapply(1:10, function(i) CorrM(5))
+#' S = list2array(S)
+#' FM = cor.mean(S,MaxIt = 50)
+#' FM
+#' cor.fsv(S,FM,parallel = TRUE,ncore = 8)
+cor.fsv = function(C,FM,parallel = NULL,ncore = NULL) {
+  if(is.null(parallel)) parallel = FALSE
+  if(is.null(ncore)) ncore = detectCores()-2
+  n = dim(C)[3]
+  # compute f.s.v. by parallel computation
+  if(parallel) {
+    registerDoParallel(ncore)
+    fv = foreach(i = 1:n)%dopar%{
+      return(cor.metric(FM, C[,,i])^2)
+    }
+    fsv =  mean(unlist(fv))
+  } else {
+    # compute f.s.v by a loop
+    fv = sapply(1:n, function(i) (cor.metric(FM, C[,,i])^2))
+    fsv = mean(fv)
+  }
+  return(fsv)
 }
 #'
 #'

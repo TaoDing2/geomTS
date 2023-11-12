@@ -19,6 +19,7 @@ Estimated parameters and model parameters, including \describe{
 \item{theta}{Estimated parameters of autoregressive terms and mean reverting term (if \code{Mean} is \code{TRUE}).}
 \item{sigma}{Estimated standard deviation of the white noise in the model.}
 \item{AIC}{AIC value.}
+\item{BIC}{BIC value.}
 \item{loglik}{log-likelihood function value.}
 }
 }

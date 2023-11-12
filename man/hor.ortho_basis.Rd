@@ -13,7 +13,11 @@ hor.ortho_basis(S)
 Orthonormal basis with the dimension of \eqn{m = p(p-1)/2}
 }
 \description{
-Construct orthonormal basis in the horizontal subspace \eqn{\mathcal{H}_S}.
+Construct orthonormal basis in the horizontal space \eqn{\mathcal{H}_S}.
+}
+\note{
+This functions only applies to the tangent space which is horizontal,
+i.e. the vertical components in tangent space \eqn{T_S\mathcal{S}_p^+} are all 0.
 }
 \examples{
 S = CovM(5)

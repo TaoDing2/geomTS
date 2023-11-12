@@ -2,27 +2,29 @@
 % Please edit documentation in R/simulate.R
 \name{spd.simulate}
 \alias{spd.simulate}
-\title{Simulate SPD matrices under the framework of manifold-adapted time series model with scalar coefficients}
+\title{Simulate SPD matrices under the framework of manifold-adapted model}
 \usage{
 spd.simulate(n, alpha, sigma, beta = NULL, attS = NULL, p = NULL)
 }
 \arguments{
-\item{n}{Number of total simulated time points.}
+\item{n}{Number of simulated matrix-valued time points.}
 
-\item{alpha}{A vector. It represents the autoregressive coefficients.}
+\item{alpha}{Coefficients in the model whose length is the lags of autoregressive terms.
+If it is a vector, the manifold-adapted model with scalar coefficients is used.
+If it is a list with multiple diagonals, the model with diagonal coefficients is used.}
 
-\item{sigma}{Standard deviation of white noise}
+\item{sigma}{Standard deviation of white noise.}
 
-\item{beta}{The regression coefficient of mean reverting term. It should be given when \code{attS} is not \code{NULL}.}
+\item{beta}{Coefficient of mean reversion. It follows the attract point/ Mean.
+When we consider the mean-reverting term in the model, \code{attS} should be input and then \code{beta} is required.}
 
-\item{attS}{An attract point in \eqn{\mathcal{S}_p^+}. It should be given when \code{beta} is not \code{NULL}.}
+\item{attS}{Attract point.}
 
-\item{p}{The dimension \eqn{p}, if \code{beta} and \code{attS} are missing.}
+\item{p}{Dimensions if \eqn{beta} and \eqn{attS} are missing.}
 }
 \value{
-An  \eqn{p \times p \times n} array data in \eqn{\mathcal{S}_p^+}.
+An array data \eqn{p \times p \times n} in  \eqn{\mathcal{S}_p^+}.
 }
 \description{
-Simulating SPD matrices in affine invariant manifold \eqn{\mathcal{S}_p^+} according to the mean-reverting autoregressive model
-with scalar coefficients.
+Simulate SPD matrices under framework of manifold-adapted model in \eqn{\mathcal{S}_p^+}.
 }
