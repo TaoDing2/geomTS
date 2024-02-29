@@ -15,7 +15,9 @@ Imports: Rdpack,
     colorspace,
     ggplot2,
     scales,
-    MASS
+    MASS,
+    doParallel,
+    smacof
 RdMacros: Rdpack
 Depends: 
     R (>= 2.10)
