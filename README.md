@@ -21,6 +21,6 @@ You can install the development version of geomTS from [GitHub](https://github.c
 devtools::install_github("TaoDing2/geomTS")
 library(geomTS)
 ```
-If you encounter any bugs or have suggestions regarding this package, please leave comments within this repository or email me directly at (t.ding2@newcastle.ac.uk).
+If you encounter any bugs or have suggestions regarding this package, please leave comments within this repository or email me directly at (dingtao@shanghaitech.edu.cn).
 
 Thank you in advance for your contributions to this package.
